@@ -4,18 +4,22 @@ import pytorch_lightning as pl
 from torchmetrics import Accuracy
 
 class classifier(pl.LightningModule):
-    def __init__(self,net):
+    def __init__(self,net,teacher=None):
         super().__init__()
         self.net=net
         self.loss_fn=nn.CrossEntropyLoss()
         self.train_acc=Accuracy(num_classes=10,multiclass=True)
         self.val_acc=Accuracy(num_classes=10,multiclass=True)
+        self.teacher=teacher
+
     def forward(self,x):
         out=self.net(x)
         return out
     def training_step(self, batch, batch_idx):
         x, y = batch
         out = self.net(x)
+        if self.teacher!=None:
+            y=self.teacher(x)
         loss = self.loss_fn(out, y)
         acc=self.train_acc(out,y)
         self.log('train_loss',loss,prog_bar=True,on_epoch=True,on_step=False)
