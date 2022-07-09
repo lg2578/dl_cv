@@ -2,6 +2,7 @@ from torch import optim
 import torch.nn as nn
 import pytorch_lightning as pl
 from torchmetrics import Accuracy
+import torch
 
 class classifier(pl.LightningModule):
     def __init__(self,net,teacher=None):
@@ -22,7 +23,11 @@ class classifier(pl.LightningModule):
         if self.teacher!=None:
             y=self.teacher(x)
         print(y)
+        
+
         loss = self.loss_fn(out, y)
+        y=torch.argmax(y,dim=1)
+
         acc=self.train_acc(out,y)
         self.log('train_loss',loss,prog_bar=True,on_epoch=True,on_step=False)
         self.log('train_acc',acc,prog_bar=True,on_epoch=True,on_step=False)
