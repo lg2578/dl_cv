@@ -18,11 +18,11 @@ class classifier(pl.LightningModule):
         return out
     def training_step(self, batch, batch_idx):
         x, y = batch
-        print(y)
+        # print(y)
         out = self.net(x)
         if self.teacher!=None:
             y=self.teacher(x)
-        print(y)
+        # print(y)
         
 
         loss = self.loss_fn(out, y)
